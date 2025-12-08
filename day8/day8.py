@@ -22,20 +22,20 @@ def add_circuit(item1, item2):
 	else:
 		circuits.append([item1, item2])
 
+def sort_coordinates(coordinate, list_coordinate):
+	x_distance = coordinate[0] - list_coordinate[0]
+	y_distance = coordinate[1] - list_coordinate[1]
+	z_distance = coordinate[2] - list_coordinate[2]
+	distance = (x_distance ** 2 + y_distance ** 2 + z_distance ** 2) ** .5
+	return distance
+
 for item in data:
 	smallest_dist = 0
 	new_data = deepcopy(data)
 	new_data.remove(item)
-	for item2 in new_data:
-		x_distance = abs(item[0] - item2[0])
-		y_distance = abs(item[1] - item2[1])
-		z_distance = abs(item[2] - item2[2])
-		distance = (x_distance ** 2 + y_distance **2 + z_distance ** 2) ** .5
-		if distance < smallest_dist or smallest_dist == 0:
-			smallest_dist = distance
-			closest = [item, item2]
-		add_circuit(item, item2)
+	item2 = sorted(new_data, key=lambda i: sort_coordinates(item, new_data[new_data.index(i)]))[0]
+	add_circuit(item, item2)
 
-circuits = sorted()			
-									
-print(closest)
+circuits = sorted(circuits, key = lambda i: len(i), reverse=True)
+print(circuits[0], circuits[1], circuits[2])
+print(len(circuits[0]), len(circuits[1]), len(circuits[2]))
