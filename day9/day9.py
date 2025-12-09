@@ -1,34 +1,66 @@
 from itertools import combinations
 
 with open("input9", "r") as f:
-	data = list(map(lambda i: list(map(lambda j: int(j), i.split(","))), f.read().split("\n")))
+	data = list(map(lambda i: tuple(map(lambda j: int(j), i.split(","))), f.read().split("\n")))
 	
 pairs = []
 
-all_sides = set([])
+vertical_sides = set([])
+horizontal_sides = set([])
 
-def check_side(side):
-	for item in all_sides:
-		if side[0] == side
+
+def check_sides(sides):
+	checking_vertical = False
+	checking_horizontal = False
+	for side1 in sides:
+		# for side2 in vertical_sides | horizontal_sides:
+		# 	if side2[0][0] <= side1[0][0] <= side1[1][0] <= side2[1][0] and side2[0][1] <= side1[0][1] <= side1[1][1] <= side2[1][1]:
+		# 		return True
+		for side2 in vertical_sides:
+			if side2[0][1] <= side1[0][1] <= side1[1][1] <= side2[1][1]:
+				checking_vertical = True
+				break
+		for side2 in horizontal_sides:
+			if side2[0][0] <= side1[0][0] <= side1[1][0] <= side2[1][0]:
+				checking_horizontal = True
+				break
+		return checking_horizontal and checking_vertical
 
 def check_rectangle(coord1, coord2):
-	sides = set([[coord1[0], coord2[0]], [coord1[1], coord2[0]], [coord1[0], coord2[1]], [coord1[1], coord2[1]]])
-	if len(sides & all_sides) >= 3: return True
-	elif len(sides & all_sides) <= 1: return False
+	sides: set = set([])
+	sides.add((coord1, (coord2[0], coord1[1])))
+	sides.add((coord1, (coord1[0], coord2[1])))
+	sides.add((coord2, (coord1[0], coord2[1])))
+	sides.add((coord2, (coord2[0], coord1[1])))
+	print(sides)
+	print(vertical_sides)
+	print(horizontal_sides)
+	if len(sides) < 4: return False
+	elif len(sides & vertical_sides & horizontal_sides) >= 3: return True
+	elif len((sides & vertical_sides) | (sides & horizontal_sides)) <= 1:
+		print("asads")
+		return False
 	else:
-		for side in sides - all_sides:
-			
+		return check_sides((sides - vertical_sides) - horizontal_sides)
 
 def get_area(item1, item2):
 	x = abs(item1[0] - item2[0]) + 1
 	y = abs(item1[1] - item2[1]) + 1
 	return x * y
 
-for i in	
-			
+for i in range(0, len(data), 2):
+	horizontal_sides.add((data[i], data[i+1]))
+
+for i in range(1, len(data), 2):
+	vertical_sides.add((data[i], data[(i+1) % (len(data)-1)]))
+
+
+biggest = 0
+
 for i in combinations(data, 2):
-	pairs.append([get_area(i[0], i[1]), i[0], i[1]])
+	if check_rectangle(i[0], i[1]):
+		area = get_area(i[0], i[1])
+		if area > biggest: biggest = area
 
-pairs = sorted(pairs, key=lambda i: i[0], reverse=True)
 
-print(pairs[0][0])
+print(biggest)
