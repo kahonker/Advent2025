@@ -28,13 +28,10 @@ def check_sides(sides):
 
 def check_rectangle(coord1, coord2):
 	sides: set = set([])
-	sides.add((coord1, (coord2[0], coord1[1])))
-	sides.add((coord1, (coord1[0], coord2[1])))
-	sides.add((coord2, (coord1[0], coord2[1])))
-	sides.add((coord2, (coord2[0], coord1[1])))
-	print(sides)
-	print(vertical_sides)
-	print(horizontal_sides)
+	sides.add(tuple(sorted((coord1, (coord2[0], coord1[1])), key=lambda i: i[0])))
+	sides.add(tuple(sorted((coord1, (coord1[0], coord2[1])), key=lambda i: i[0])))
+	sides.add(tuple(sorted((coord2, (coord1[0], coord2[1])), key=lambda i: i[0])))
+	sides.add(tuple(sorted((coord2, (coord2[0], coord1[1])), key=lambda i: i[0])))
 	if len(sides) < 4: return False
 	elif len(sides & vertical_sides & horizontal_sides) >= 3: return True
 	elif len((sides & vertical_sides) | (sides & horizontal_sides)) <= 1:
@@ -49,10 +46,12 @@ def get_area(item1, item2):
 	return x * y
 
 for i in range(0, len(data), 2):
-	horizontal_sides.add((data[i], data[i+1]))
-
+	side = tuple(sorted((data[i], data[i+1]), key=lambda j: j[0]))
+	horizontal_sides.add(side)
+	
 for i in range(1, len(data), 2):
-	vertical_sides.add((data[i], data[(i+1) % (len(data)-1)]))
+	side = tuple(sorted((data[i], data[(i+1) % (len(data) -1)]), key=lambda j: j[0]))
+	vertical_sides.add(side)
 
 
 biggest = 0
